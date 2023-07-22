@@ -21,6 +21,7 @@ import com.chatapp.DTO.UserDto;
 import com.chatapp.entities.Message;
 import com.chatapp.helpers.DtoConverter;
 import com.chatapp.payloads.ApiResponse;
+import com.chatapp.payloads.ChatStarted;
 import com.chatapp.payloads.UserLoginInfo;
 import com.chatapp.services.MessageServices;
 import com.chatapp.services.UserServices;
@@ -160,6 +161,15 @@ public class MainController {
 	
 	
 	
+	//get USER by UserId
+	@GetMapping("/getUser/{userId}")	
+	public ResponseEntity<?> getUserById(@PathVariable("userId") int userId) throws Exception{
+		UserDto userById = userService.getUserById(userId);
+		return ResponseEntity.ok(userById);
+	}
+	
+	
+	
 	//get users with whom i started chat
 	@GetMapping("/chatStarted")
 	public ResponseEntity<?> chatStarted(){
@@ -171,7 +181,7 @@ public class MainController {
 		}		
 		
 		
-		List<UserDto> chatStarted = new ArrayList<>();
+		List<ChatStarted> chatStarted = new ArrayList<>();
 		try {
 			chatStarted = msgService.chatStarted(loggedinUser);
 		} catch (Exception e) {
@@ -181,6 +191,34 @@ public class MainController {
 		
 		return ResponseEntity.ok(chatStarted);
 	}
+	
+	
+	
+	//GET Users With chat started FINAL
+	@GetMapping("/chatStarted/{userId}")
+	public ResponseEntity<?> chatStartedList(@PathVariable("userId") int userId) throws Exception {
+		
+		UserDto loggedinUser = userService.getUserById(userId);
+		
+		if (loggedinUser == null) {
+			return ResponseEntity.badRequest().body(new ApiResponse("You are not logged in!", "error"));
+		}
+
+		List<ChatStarted> chatStarted = new ArrayList<>();
+		
+		try {
+			chatStarted = msgService.chatStarted(loggedinUser);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return ResponseEntity.ok(chatStarted);
+	}
+	
+	
+	
+	
 
 	
 	
@@ -216,6 +254,7 @@ public class MainController {
 
 
 	
+	//ETA USE KORTESI REACT APP A
 	
 	// get our message for Specific User
 	@GetMapping("/get-our-message/{senderId}/{receiverId}")

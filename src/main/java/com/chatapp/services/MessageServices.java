@@ -2,12 +2,14 @@ package com.chatapp.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.chatapp.DTO.UserDto;
 import com.chatapp.entities.Message;
+import com.chatapp.payloads.ChatStarted;
 import com.chatapp.repositories.MessageRepo;
 
 @Service
@@ -32,19 +34,49 @@ public class MessageServices {
 	
 	
 //	Chat started with them
-	public List<UserDto> chatStarted(UserDto user) throws Exception{
+	public List<ChatStarted> chatStarted(UserDto user) throws Exception{
 		
-		List<Integer> findDistinctReceiverIdsBySender = msgRepo.findDistinctReceiverIdsBySender(user.getId());		
+		List<Integer> findDistinctReceiverIdsBySender = msgRepo.findDistinctReceiverIdsBySender(user.getId());	
 		
-		List<UserDto> chatStarted = new ArrayList<>();
+		List<ChatStarted> chatStartedList = new ArrayList<>();
 		
 		for(int userId : findDistinctReceiverIdsBySender) {
-			UserDto receiver = userService.getUserById(userId);
-			chatStarted.add(receiver);
+			
+			ChatStarted chatStarted = new ChatStarted();
+			
+			UserDto oppositeUser = userService.getUserById(userId);
+			
+			List<Integer> idCombination = List.of(user.getId(), userId);
+			Message usersLastMessage = msgRepo.findFirstByReceiverIdInAndSenderIdInOrderByTimestampDesc(idCombination, idCombination);
+			
+			
+			//setting the chat started details
+			chatStarted.setUser(oppositeUser);
+			chatStarted.setMessageState("read");
+			chatStarted.setLastMessage(usersLastMessage);
+			
+			chatStartedList.add(chatStarted);			
 		}
 		
-		return chatStarted;
+		return chatStartedList;
 	}
+
+	
+////	Chat started with them
+//	public List<UserDto> chatStarted(UserDto user) throws Exception{
+//		
+//		List<Integer> findDistinctReceiverIdsBySender = msgRepo.findDistinctReceiverIdsBySender(user.getId());		
+//		
+//		List<UserDto> chatStartedUser = new ArrayList<>();
+//		List<ChatStarted> chatStarted = new ArrayList<>();
+//		
+//		for(int userId : findDistinctReceiverIdsBySender) {
+//			UserDto receiver = userService.getUserById(userId);			
+//			chatStartedUser.add(receiver);
+//		}
+//		
+//		return chatStartedUser;
+//	}
 
 	
 	//get messages for Two users
@@ -56,5 +88,9 @@ public class MessageServices {
 		
 		return conversation;
 	}
+	
+	
+	
+	
 	
 }
