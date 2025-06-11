@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Private Chat App Backend (Spring Boot)
 
 This is the backend service for the **Private Chat App**, a real-time messaging platform. The backend is built with Spring Boot and provides RESTful APIs and WebSocket endpoints for user management, authentication, and private messaging. The frontend is a separate React application, available here: [private-chat-app-react](https://github.com/ShubratoDn/private-chat-app-react).
@@ -208,4 +207,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## License
 
 This project is licensed under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for details.
->>>>>>> 6ce226422e7bd391144d7519e8a51af5ac79a711
+
